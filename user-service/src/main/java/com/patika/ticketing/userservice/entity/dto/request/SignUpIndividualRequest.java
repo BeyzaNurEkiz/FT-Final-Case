@@ -9,7 +9,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpIndividualRequest extends SignUpBaseRequest {
+public class SignUpIndividualRequest {
 
     @NotBlank
     @Size(min = 3, max = 20)
@@ -35,9 +35,6 @@ public class SignUpIndividualRequest extends SignUpBaseRequest {
     @NotBlank
     @Size(min = 10, max = 20)
     private String phoneNumber;
-
-    @NotNull
-    private UserType userType;
 
     @NotEmpty
     @Size(min = 1, max = 3)
