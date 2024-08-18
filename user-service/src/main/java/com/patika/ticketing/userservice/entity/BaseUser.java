@@ -7,19 +7,13 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
-@Entity
-@Table(name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
-        })
+@MappedSuperclass
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseUser {
+public class BaseUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,10 +49,6 @@ public abstract class BaseUser {
     @Size(max = 20)
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
-
-    @Column(name = "user_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
