@@ -9,7 +9,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseUpdateRequest {
+public class BaseUpdateRequest {
 
     @NotNull
     private Long id;
