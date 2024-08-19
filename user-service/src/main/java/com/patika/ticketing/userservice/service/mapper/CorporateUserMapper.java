@@ -1,5 +1,6 @@
 package com.patika.ticketing.userservice.service.mapper;
 
+import com.patika.ticketing.userservice.entity.BaseUser;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import com.patika.ticketing.userservice.entity.CorporateUser;
@@ -22,13 +23,13 @@ public interface CorporateUserMapper {
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    CorporateUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
+    BaseUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
 
     @Mappings({
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    CorporateUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
+    BaseUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
 
     @Mapping(target = "roles", ignore = true)
     CorporateResponse userToUserResponse(CorporateUser user);

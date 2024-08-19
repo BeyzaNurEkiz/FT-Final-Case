@@ -1,12 +1,10 @@
 package com.patika.ticketing.userservice.service.mapper;
 
-import com.patika.ticketing.userservice.entity.CorporateUser;
+import com.patika.ticketing.userservice.entity.BaseUser;
 import com.patika.ticketing.userservice.entity.IndividualUser;
 import com.patika.ticketing.userservice.entity.Role;
-import com.patika.ticketing.userservice.entity.dto.request.SignUpCorporateRequest;
 import com.patika.ticketing.userservice.entity.dto.request.SignUpIndividualRequest;
 import com.patika.ticketing.userservice.entity.dto.request.UserUpdateRequest;
-import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
 import com.patika.ticketing.userservice.entity.dto.response.IndividualResponse;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -25,13 +23,13 @@ public interface IndividualUserMapper {
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    IndividualUser signUpRequestToUser(SignUpIndividualRequest signUpRequest, String encodedPassword);
+    BaseUser signUpRequestToUser(SignUpIndividualRequest signUpRequest, String encodedPassword);
 
     @Mappings({
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    IndividualUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
+    BaseUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
 
     @Mapping(target = "roles", ignore = true)
     IndividualResponse userToUserResponse(IndividualUser user);
