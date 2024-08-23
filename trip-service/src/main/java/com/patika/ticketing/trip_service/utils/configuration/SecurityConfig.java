@@ -1,3 +1,4 @@
+/*
 package com.patika.ticketing.trip_service.utils.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -19,3 +20,5 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+ */
