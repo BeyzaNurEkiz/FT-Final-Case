@@ -23,13 +23,13 @@ public interface CorporateUserMapper {
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
+    CorporateUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
 
     @Mappings({
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
+    CorporateUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
 
     @Mapping(target = "roles", ignore = true)
     CorporateResponse userToUserResponse(CorporateUser user);

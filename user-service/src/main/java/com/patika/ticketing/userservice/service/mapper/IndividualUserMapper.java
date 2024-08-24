@@ -23,13 +23,13 @@ public interface IndividualUserMapper {
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser signUpRequestToUser(SignUpIndividualRequest signUpRequest, String encodedPassword);
+    IndividualUser signUpRequestToUser(SignUpIndividualRequest signUpRequest, String encodedPassword);
 
     @Mappings({
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
+    IndividualUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
 
     @Mapping(target = "roles", ignore = true)
     IndividualResponse userToUserResponse(IndividualUser user);

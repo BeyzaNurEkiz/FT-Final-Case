@@ -10,7 +10,6 @@ import java.util.Set;
 @MappedSuperclass
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseUser {
