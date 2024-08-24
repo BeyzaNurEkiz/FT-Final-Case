@@ -10,6 +10,7 @@ import com.patika.ticketing.userservice.entity.dto.request.UserUpdateRequest;
 import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -44,6 +45,7 @@ public interface CorporateUserMapper {
                 .map(Objects::toString)
                 .toList();
 
-        userResponse.setRoles((Set<String>) rolesAsStrings);
+        Set<String> rolesAsSet = new HashSet<>(rolesAsStrings);
+        userResponse.setRoles(rolesAsSet);
     }
 }
