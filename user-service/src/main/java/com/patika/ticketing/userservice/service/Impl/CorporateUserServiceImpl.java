@@ -59,8 +59,6 @@ public class CorporateUserServiceImpl implements CorporateUserService {
         userDto.setRoles(roles);
         CorporateUser corporateUser=corporateUserRepository.save(userDto);
 
-        //logProducer.sendToLog(prepareLogDTO(HttpRequestMethod.POST, Messages.USER_REGISTERED));
-
         return new SuccessDataResult<>(
                 CorporateUserMapper.INSTANCE.userToUserResponse(corporateUser),
                 Messages.USER_REGISTERED
