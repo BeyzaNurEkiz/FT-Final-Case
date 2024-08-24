@@ -6,18 +6,25 @@ import com.patika.ticketing.userservice.entity.Role;
 import com.patika.ticketing.userservice.entity.ERole;
 import com.patika.ticketing.userservice.entity.dto.request.SignUpCorporateRequest;
 import com.patika.ticketing.userservice.entity.dto.request.SignUpIndividualRequest;
+import com.patika.ticketing.userservice.entity.dto.response.JwtResponse;
 import com.patika.ticketing.userservice.repository.CorporateUserRepository;
 import com.patika.ticketing.userservice.repository.IndividualUserRepository;
 import com.patika.ticketing.userservice.repository.RoleRepository;
+import com.patika.ticketing.userservice.utils.jwt.JwtUtils;
+import com.patika.ticketing.userservice.utils.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,6 +41,12 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @PostMapping("/signup/corporate")
     public ResponseEntity<?> registerCorporateUser(@Valid @RequestBody SignUpCorporateRequest signUpRequest) {
@@ -82,7 +95,23 @@ public class AuthController {
         corporateUser.setRoles(roles);
         corporateUserRepository.save(corporateUser);
 
-        return ResponseEntity.ok("Corporate user registered successfully!");
+        // Kullanıcıyı oturum açmış gibi kabul ederek JWT üretme
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Set<String> rolesStr = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                rolesStr));
     }
 
     @PostMapping("/signup/individual")
@@ -132,7 +161,22 @@ public class AuthController {
         individualUser.setRoles(roles);
         individualUserRepository.save(individualUser);
 
-        return ResponseEntity.ok("Individual user registered successfully!");
+        // Kullanıcıyı oturum açmış gibi kabul ederek JWT üretme
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Set<String> rolesStr = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toSet());
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                rolesStr));
     }
 }
-
