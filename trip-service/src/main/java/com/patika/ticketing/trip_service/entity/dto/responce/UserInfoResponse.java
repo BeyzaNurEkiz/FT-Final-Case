@@ -8,6 +8,6 @@ import lombok.Setter;
 public class UserInfoResponse {
 
     private String username;
-    private String role; // Kullanıcı rolü, örn: "ADMIN", "USER"
-    private String userType; // Kullanıcı türü, örn: "CORPORATE", "INDIVIDUAL"
+    private String role;
+    private String userType;
 }
