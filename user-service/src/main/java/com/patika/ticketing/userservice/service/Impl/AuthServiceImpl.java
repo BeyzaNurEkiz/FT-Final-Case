@@ -15,9 +15,9 @@ import com.patika.ticketing.userservice.utils.constants.ExceptionMessages;
 import com.patika.ticketing.userservice.utils.constants.Messages;
 import com.patika.ticketing.userservice.utils.exception.RoleNotFoundException;
 import com.patika.ticketing.userservice.utils.exception.UsernameAlreadyExistsException;
-import com.patika.ticketing.userservice.utils.jwt.JwtUtils;
 import com.patika.ticketing.userservice.utils.result.DataResult;
 import com.patika.ticketing.userservice.utils.result.SuccessDataResult;
+import com.patika.ticketing.userservice.utils.security.JwtUtils;
 import com.patika.ticketing.userservice.utils.security.UserDetailsImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,10 +53,11 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        // JWT Token oluşturma
+        String jwt = jwtUtils.generateTokenFromUserDetails((UserDetailsImpl) authentication.getPrincipal());
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        // Authorities'leri String'e dönüştürme
+        // Kullanıcı rollerini String formatına dönüştürme
         Set<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toSet());
@@ -72,6 +73,7 @@ public class AuthServiceImpl implements AuthService {
         return new SuccessDataResult<>(jwtResponse, "User authenticated successfully.");
     }
 
+
     @Override
     public DataResult<CorporateResponse> register(SignUpCorporateRequest signUpCorporateRequest) {
         if (corporateUserRepository.existsByUsername(signUpCorporateRequest.getUsername())) {
@@ -81,14 +83,15 @@ public class AuthServiceImpl implements AuthService {
         if (corporateUserRepository.existsByEmail(signUpCorporateRequest.getEmail())) {
             throw new UsernameAlreadyExistsException(ExceptionMessages.EMAIL_ALREADY_TAKEN);
         }
+
         String encodedPassword = passwordEncoder.encode(signUpCorporateRequest.getPassword());
-        CorporateUser userDto= (CorporateUser) CorporateUserMapper.INSTANCE.signUpRequestToUser(signUpCorporateRequest,encodedPassword);
+        CorporateUser userDto = CorporateUserMapper.INSTANCE.signUpRequestToUser(signUpCorporateRequest, encodedPassword);
 
         Set<String> strRoles = signUpCorporateRequest.getRoles();
         Set<Role> roles = mapToUserRoles(strRoles);
 
         userDto.setRoles(roles);
-        CorporateUser corporateUser=corporateUserRepository.save(userDto);
+        CorporateUser corporateUser = corporateUserRepository.save(userDto);
 
         return new SuccessDataResult<>(
                 CorporateUserMapper.INSTANCE.userToUserResponse(corporateUser),
@@ -124,4 +127,6 @@ public class AuthServiceImpl implements AuthService {
 
         return roles;
     }
+
+
 }

@@ -5,7 +5,6 @@ import com.patika.ticketing.userservice.entity.dto.request.SignUpCorporateReques
 import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
 import com.patika.ticketing.userservice.entity.dto.response.JwtResponse;
 import com.patika.ticketing.userservice.service.AuthService;
-import com.patika.ticketing.userservice.service.CorporateUserService;
 import com.patika.ticketing.userservice.utils.result.DataResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ public class UserController {
 
     private final AuthService authService;
 
-    public UserController(AuthService authService, CorporateUserService corporateUserService) {
+    public UserController(AuthService authService) {
         this.authService = authService;
     }
 
