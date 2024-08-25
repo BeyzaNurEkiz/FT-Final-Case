@@ -2,16 +2,21 @@ package com.patika.ticketing.userservice.service.Impl;
 
 import com.patika.ticketing.userservice.entity.CorporateUser;
 import com.patika.ticketing.userservice.entity.ERole;
+import com.patika.ticketing.userservice.entity.IndividualUser;
 import com.patika.ticketing.userservice.entity.Role;
 import com.patika.ticketing.userservice.entity.dto.request.LoginRequest;
 import com.patika.ticketing.userservice.entity.dto.request.SignUpCorporateRequest;
+import com.patika.ticketing.userservice.entity.dto.request.SignUpIndividualRequest;
 import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
+import com.patika.ticketing.userservice.entity.dto.response.IndividualResponse;
 import com.patika.ticketing.userservice.entity.dto.response.JwtResponse;
 import com.patika.ticketing.userservice.repository.CorporateUserRepository;
+import com.patika.ticketing.userservice.repository.IndividualUserRepository;
 import com.patika.ticketing.userservice.repository.RoleRepository;
 import com.patika.ticketing.userservice.repository.TokenRepository;
 import com.patika.ticketing.userservice.service.AuthService;
 import com.patika.ticketing.userservice.service.mapper.CorporateUserMapper;
+import com.patika.ticketing.userservice.service.mapper.IndividualUserMapper;
 import com.patika.ticketing.userservice.utils.constants.ExceptionMessages;
 import com.patika.ticketing.userservice.utils.constants.Messages;
 import com.patika.ticketing.userservice.utils.exception.RoleNotFoundException;
@@ -41,14 +46,16 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final CorporateUserRepository corporateUserRepository;
+    private final IndividualUserRepository individualUserRepository;
     private final TokenRepository tokenRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils, CorporateUserRepository corporateUserRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils, CorporateUserRepository corporateUserRepository, IndividualUserRepository individualUserRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.corporateUserRepository = corporateUserRepository;
+        this.individualUserRepository = individualUserRepository;
         this.tokenRepository = tokenRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -80,9 +87,34 @@ public class AuthServiceImpl implements AuthService {
         return new SuccessDataResult<>(jwtResponse, "User authenticated successfully.");
     }
 
+    @Override
+    public DataResult<IndividualResponse> registerIndividula(SignUpIndividualRequest signUpIndividualRequest) {
+        if (individualUserRepository.existsByUsername(signUpIndividualRequest.getUsername())) {
+            throw new UsernameAlreadyExistsException(ExceptionMessages.USERNAME_ALREADY_TAKEN);
+        }
+
+        if (individualUserRepository.existsByEmail(signUpIndividualRequest.getEmail())) {
+            throw new UsernameAlreadyExistsException(ExceptionMessages.EMAIL_ALREADY_TAKEN);
+        }
+
+        String encodedPassword = passwordEncoder.encode(signUpIndividualRequest.getPassword());
+        IndividualUser userDto = IndividualUserMapper.INSTANCE.signUpRequestToUser(signUpIndividualRequest, encodedPassword);
+
+        Set<String> strRoles = signUpIndividualRequest.getRoles();
+        Set<Role> roles = mapToUserRoles(strRoles);
+
+        userDto.setRoles(roles);
+        IndividualUser individualUser = individualUserRepository.save(userDto);
+
+        return new SuccessDataResult<>(
+                IndividualUserMapper.INSTANCE.userToUserResponse(individualUser),
+                Messages.USER_REGISTERED
+        );
+    }
+
 
     @Override
-    public DataResult<CorporateResponse> register(SignUpCorporateRequest signUpCorporateRequest) {
+    public DataResult<CorporateResponse> registerCorporate(SignUpCorporateRequest signUpCorporateRequest) {
         if (corporateUserRepository.existsByUsername(signUpCorporateRequest.getUsername())) {
             throw new UsernameAlreadyExistsException(ExceptionMessages.USERNAME_ALREADY_TAKEN);
         }

@@ -1,14 +1,17 @@
 package com.patika.ticketing.userservice.service.mapper;
 
 import com.patika.ticketing.userservice.entity.BaseUser;
+import com.patika.ticketing.userservice.entity.CorporateUser;
 import com.patika.ticketing.userservice.entity.IndividualUser;
 import com.patika.ticketing.userservice.entity.Role;
 import com.patika.ticketing.userservice.entity.dto.request.SignUpIndividualRequest;
 import com.patika.ticketing.userservice.entity.dto.request.UserUpdateRequest;
+import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
 import com.patika.ticketing.userservice.entity.dto.response.IndividualResponse;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -44,6 +47,7 @@ public interface IndividualUserMapper {
                 .map(Objects::toString)
                 .toList();
 
-        userResponse.setRoles((Set<String>) rolesAsStrings);
+        Set<String> rolesAsSet = new HashSet<>(rolesAsStrings);
+        userResponse.setRoles(rolesAsSet);
     }
 }
