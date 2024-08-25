@@ -17,6 +17,8 @@ import com.patika.ticketing.userservice.repository.TokenRepository;
 import com.patika.ticketing.userservice.service.AuthService;
 import com.patika.ticketing.userservice.service.mapper.CorporateUserMapper;
 import com.patika.ticketing.userservice.service.mapper.IndividualUserMapper;
+import com.patika.ticketing.userservice.utils.client.dto.EmailRequest;
+import com.patika.ticketing.userservice.utils.client.service.EmailServiceClient;
 import com.patika.ticketing.userservice.utils.constants.ExceptionMessages;
 import com.patika.ticketing.userservice.utils.constants.Messages;
 import com.patika.ticketing.userservice.utils.exception.RoleNotFoundException;
@@ -51,7 +53,9 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils, CorporateUserRepository corporateUserRepository, IndividualUserRepository individualUserRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    private final EmailServiceClient emailServiceClient;
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils, CorporateUserRepository corporateUserRepository, IndividualUserRepository individualUserRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, EmailServiceClient emailServiceClient) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.corporateUserRepository = corporateUserRepository;
@@ -59,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
         this.tokenRepository = tokenRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailServiceClient = emailServiceClient;
     }
 
     @Override
@@ -106,6 +111,12 @@ public class AuthServiceImpl implements AuthService {
         userDto.setRoles(roles);
         IndividualUser individualUser = individualUserRepository.save(userDto);
 
+        emailServiceClient.sendEmail(new EmailRequest(
+                signUpIndividualRequest.getEmail(),
+                "Hoş Geldiniz!",
+                "Kayıt işleminiz başarıyla tamamlandı."
+        ));
+
         return new SuccessDataResult<>(
                 IndividualUserMapper.INSTANCE.userToUserResponse(individualUser),
                 Messages.USER_REGISTERED
@@ -131,6 +142,12 @@ public class AuthServiceImpl implements AuthService {
 
         userDto.setRoles(roles);
         CorporateUser corporateUser = corporateUserRepository.save(userDto);
+
+        emailServiceClient.sendEmail(new EmailRequest(
+                signUpCorporateRequest.getEmail(),
+                "Hoş Geldiniz!",
+                "Kurumsal kaydınız başarıyla tamamlandı."
+        ));
 
         return new SuccessDataResult<>(
                 CorporateUserMapper.INSTANCE.userToUserResponse(corporateUser),
