@@ -1,6 +1,5 @@
 package com.patika.ticketing.trip_service.entity.dto.responce;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
