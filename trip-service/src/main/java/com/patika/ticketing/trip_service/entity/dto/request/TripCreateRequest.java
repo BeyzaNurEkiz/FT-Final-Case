@@ -26,4 +26,7 @@ public class TripCreateRequest {
     @Min(value = 1, message = "Capacity must be at least 1")
     private int capacity;
 
+
+    private String token;
+
 }

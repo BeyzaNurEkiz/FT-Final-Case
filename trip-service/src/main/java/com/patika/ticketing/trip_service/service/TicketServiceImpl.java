@@ -1,7 +1,9 @@
 package com.patika.ticketing.trip_service.service;
 
+import com.patika.ticketing.trip_service.client.UserServiceClient;
 import com.patika.ticketing.trip_service.entity.Ticket;
 import com.patika.ticketing.trip_service.entity.dto.request.TicketRequest;
+import com.patika.ticketing.trip_service.entity.dto.responce.UserInfoResponse;
 import com.patika.ticketing.trip_service.exception.UnauthorizedException;
 import com.patika.ticketing.trip_service.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +13,22 @@ import org.springframework.stereotype.Service;
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
-    private final AuthService authService;
+    private final UserServiceClient userServiceClient;
 
     @Autowired
-    public TicketServiceImpl(TicketRepository ticketRepository, AuthService authService) {
+    public TicketServiceImpl(TicketRepository ticketRepository, UserServiceClient userServiceClient) {
         this.ticketRepository = ticketRepository;
-        this.authService = authService;
+        this.userServiceClient = userServiceClient;
     }
 
     @Override
     public Ticket reserveTicket(String token, TicketRequest ticketRequest) {
-        // JWT token'ı doğrulama
-        if (!authService.validateToken(token)) {
-            throw new UnauthorizedException("Invalid token");
+        // Kullanıcı bilgilerini user-service'den al
+        UserInfoResponse userInfo = userServiceClient.getUserInfo(token);
+
+        // Kullanıcı yetkilendirmesini kontrol et
+        if (userInfo == null || !"USER".equals(userInfo.getRole())) {
+            throw new UnauthorizedException("Geçersiz token veya yetkisiz kullanıcı");
         }
 
         // Bilet rezervasyonu yapma işlemi
