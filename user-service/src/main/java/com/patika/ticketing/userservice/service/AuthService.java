@@ -13,6 +13,6 @@ public interface AuthService {
 
     DataResult<JwtResponse> authenticateUser(LoginRequest loginRequest);
     DataResult<CorporateResponse> registerCorporate(SignUpCorporateRequest signUpCorporateRequest);
-    DataResult<IndividualResponse> registerIndividula(SignUpIndividualRequest signUpIndividualRequest);
+    DataResult<IndividualResponse> registerIndividual(SignUpIndividualRequest signUpIndividualRequest);
     Result logout();
 }

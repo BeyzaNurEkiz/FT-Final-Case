@@ -31,7 +31,7 @@ public class UserController {
 
     @PostMapping("/registerIndividual")
     public ResponseEntity<DataResult<IndividualResponse>> registerIndividual(@RequestBody SignUpIndividualRequest signUpRequest) {
-        DataResult<IndividualResponse> result = authService.registerIndividula(signUpRequest);
+        DataResult<IndividualResponse> result = authService.registerIndividual(signUpRequest);
         return ResponseEntity.ok(result);
     }
 

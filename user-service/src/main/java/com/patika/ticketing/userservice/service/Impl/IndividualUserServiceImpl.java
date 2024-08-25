@@ -41,31 +41,6 @@ public class IndividualUserServiceImpl implements IndividualUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
-    @Override
-    public DataResult<IndividualResponse> register(SignUpIndividualRequest signUpIndividualRequest) {
-        if (individualUserRepository.existsByUsername(signUpIndividualRequest.getUsername())) {
-            throw new UsernameAlreadyExistsException(ExceptionMessages.USERNAME_ALREADY_TAKEN);
-        }
-
-        if (individualUserRepository.existsByEmail(signUpIndividualRequest.getEmail())) {
-            throw new UsernameAlreadyExistsException(ExceptionMessages.EMAIL_ALREADY_TAKEN);
-        }
-        String encodedPassword = passwordEncoder.encode(signUpIndividualRequest.getPassword());
-        IndividualUser userDto= (IndividualUser) IndividualUserMapper.INSTANCE.signUpRequestToUser(signUpIndividualRequest,encodedPassword);
-
-        Set<String> strRoles = signUpIndividualRequest.getRoles();
-        Set<Role> roles = mapToUserRoles(strRoles);
-
-        userDto.setRoles(roles);
-        IndividualUser individualUser=individualUserRepository.save(userDto);
-
-        return new SuccessDataResult<>(
-                IndividualUserMapper.INSTANCE.userToUserResponse(individualUser),
-                Messages.USER_REGISTERED
-        );
-    }
-
     @Override
     public DataResult<IndividualResponse> update(UserUpdateRequest userUpdateRequest) {
         return null;
@@ -89,35 +64,6 @@ public class IndividualUserServiceImpl implements IndividualUserService {
     @Override
     public Result deleteById(Long userId) {
         return null;
-    }
-
-    public Set<Role> mapToUserRoles(Set<String> strRoles) {
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository
-                    .findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RoleNotFoundException(ExceptionMessages.ROLE_NOT_FOUND));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository
-                                .findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RoleNotFoundException(ExceptionMessages.ROLE_NOT_FOUND));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository
-                                .findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RoleNotFoundException(ExceptionMessages.ROLE_NOT_FOUND));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        return roles;
     }
 
 }

@@ -88,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public DataResult<IndividualResponse> registerIndividula(SignUpIndividualRequest signUpIndividualRequest) {
+    public DataResult<IndividualResponse> registerIndividual(SignUpIndividualRequest signUpIndividualRequest) {
         if (individualUserRepository.existsByUsername(signUpIndividualRequest.getUsername())) {
             throw new UsernameAlreadyExistsException(ExceptionMessages.USERNAME_ALREADY_TAKEN);
         }
