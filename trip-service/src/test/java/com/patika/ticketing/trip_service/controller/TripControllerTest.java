@@ -57,9 +57,9 @@ class TripControllerTest {
 
     @Test
     void testCancelTrip() {
-        ResponseEntity<Void> response = tripController.cancelTrip(1L);
+        ResponseEntity<Void> response = tripController.cancelTrip(1L,"mock-token");
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(tripService, times(1)).cancelTrip(1L);
+        verify(tripService, times(1)).cancelTrip(1L,"mock-token");
     }
 }

@@ -11,8 +11,6 @@ import java.util.List;
 
 public interface IndividualUserService {
 
-    DataResult<IndividualResponse> register(SignUpIndividualRequest signUpIndividualRequest);
-
     DataResult<IndividualResponse> update(UserUpdateRequest userUpdateRequest);
 
     DataResult<List<IndividualResponse>> findAll();

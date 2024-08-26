@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface  TripService {
     Trip createTrip(TripCreateRequest tripRequest);
-    void cancelTrip(Long tripId);
+    void cancelTrip(Long tripId, String token);
     List<Trip> searchTrips(TripSearchRequest searchRequest);
 
 }

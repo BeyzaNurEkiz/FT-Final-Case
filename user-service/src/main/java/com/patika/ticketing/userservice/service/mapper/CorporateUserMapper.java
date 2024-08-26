@@ -10,6 +10,7 @@ import com.patika.ticketing.userservice.entity.dto.request.UserUpdateRequest;
 import com.patika.ticketing.userservice.entity.dto.response.CorporateResponse;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -23,13 +24,13 @@ public interface CorporateUserMapper {
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
+    CorporateUser signUpRequestToUser(SignUpCorporateRequest signUpRequest, String encodedPassword);
 
     @Mappings({
             @Mapping(target = "roles", ignore = true),
             @Mapping(source = "encodedPassword", target = "password")
     })
-    BaseUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
+    CorporateUser userUpdateRequestToUser(UserUpdateRequest userUpdateRequest, String encodedPassword);
 
     @Mapping(target = "roles", ignore = true)
     CorporateResponse userToUserResponse(CorporateUser user);
@@ -44,6 +45,7 @@ public interface CorporateUserMapper {
                 .map(Objects::toString)
                 .toList();
 
-        userResponse.setRoles((Set<String>) rolesAsStrings);
+        Set<String> rolesAsSet = new HashSet<>(rolesAsStrings);
+        userResponse.setRoles(rolesAsSet);
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface CorporateUserService {
 
-    DataResult<CorporateResponse> register(SignUpCorporateRequest signUpCorporateRequest);
     DataResult<CorporateResponse> update(UserUpdateRequest userUpdateRequest);
     DataResult<List<CorporateResponse>> findAll();
     DataResult<CorporateResponse> findById(Long userId);

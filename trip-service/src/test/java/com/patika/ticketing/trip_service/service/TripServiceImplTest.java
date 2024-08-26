@@ -62,7 +62,7 @@ class TripServiceImplTest {
 
         when(tripRepository.findById(1L)).thenReturn(Optional.of(trip));
 
-        tripService.cancelTrip(1L);
+        tripService.cancelTrip(1L, "mock-token");
 
         verify(tripRepository, times(1)).delete(trip);
     }

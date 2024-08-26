@@ -1,9 +1,10 @@
 package com.patika.ticketing.trip_service.service;
 
-
+import com.patika.ticketing.trip_service.client.UserServiceClient;
 import com.patika.ticketing.trip_service.entity.Trip;
 import com.patika.ticketing.trip_service.entity.dto.request.TripCreateRequest;
 import com.patika.ticketing.trip_service.entity.dto.request.TripSearchRequest;
+import com.patika.ticketing.trip_service.entity.dto.responce.UserInfoResponse;
 import com.patika.ticketing.trip_service.repository.TripRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,24 @@ import java.util.List;
 public class TripServiceImpl implements TripService {
 
     private final TripRepository tripRepository;
+    private final UserServiceClient userServiceClient;
 
     @Autowired
-    public TripServiceImpl(TripRepository tripRepository) {
+    public TripServiceImpl(TripRepository tripRepository, UserServiceClient userServiceClient) {
         this.tripRepository = tripRepository;
+        this.userServiceClient = userServiceClient;
     }
 
     @Override
     public Trip createTrip(TripCreateRequest tripRequest) {
+        // User-service'den kullanıcı bilgilerini al
+        UserInfoResponse userInfo = userServiceClient.getUserInfo(tripRequest.getToken());
+
+        // Kullanıcı rolüne göre işlem kısıtlamalarını uygula
+        if (!"ADMIN".equals(userInfo.getRole())) {
+            throw new RuntimeException("Sadece admin kullanıcılar yeni sefer oluşturabilir.");
+        }
+
         Trip trip = new Trip();
         trip.setDepartureCity(tripRequest.getDepartureCity());
         trip.setArrivalCity(tripRequest.getDestinationCity());
@@ -35,7 +46,15 @@ public class TripServiceImpl implements TripService {
     }
 
     @Override
-    public void cancelTrip(Long tripId) {
+    public void cancelTrip(Long tripId, String token) {
+        // User-service'den kullanıcı bilgilerini al
+        UserInfoResponse userInfo = userServiceClient.getUserInfo(token);
+
+        // Kullanıcı rolüne göre işlem kısıtlamalarını uygula
+        if (!"ADMIN".equals(userInfo.getRole())) {
+            throw new RuntimeException("Sadece admin kullanıcılar sefer iptal edebilir.");
+        }
+
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new RuntimeException("Trip not found"));
         tripRepository.delete(trip); // Alternatif: trip.setActive(false); ve pasif hale getirme.

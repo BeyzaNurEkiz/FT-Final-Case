@@ -32,8 +32,8 @@ public class TripController {
 
     @DeleteMapping("/cancel/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> cancelTrip(@PathVariable Long id) {
-        tripService.cancelTrip(id);
+    public ResponseEntity<Void> cancelTrip(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        tripService.cancelTrip(id, token); // cancelTrip metodu token ile çağrılıyor
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

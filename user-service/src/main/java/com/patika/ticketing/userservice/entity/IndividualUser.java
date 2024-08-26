@@ -21,7 +21,7 @@ public class IndividualUser extends BaseUser {
     private String tcNumber;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "individual_user_roles",
+    @JoinTable(name = "individual_  user_roles",
             joinColumns = @JoinColumn(name = "individual_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
