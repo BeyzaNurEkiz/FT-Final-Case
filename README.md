@@ -1,5 +1,5 @@
 
-# FT-Final-Case
+# Online Ticketing System
 
 ## Genel Bakış
 Bu proje, uçaklar ve otobüsler için çevrimiçi biletleme sistemine dayalı bir mikroservis tabanlı projedir. Proje üç ana hizmetten oluşmaktadır:
